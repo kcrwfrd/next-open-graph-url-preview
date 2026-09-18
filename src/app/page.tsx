@@ -1,4 +1,51 @@
+import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Image from "next/image";
+
+const TITLE = "OpenGraph Preview Test";
+const DESCRIPTION = "Troubleshooting rich link previews in iMessage";
+
+/**
+ * Absolute origin for OpenGraph URLs. NEXT_PUBLIC_SITE_URL wins when set;
+ * otherwise it is derived from the request so tunnels (ngrok, etc.) just work.
+ */
+async function getBaseUrl(): Promise<string> {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL;
+  if (fromEnv) return fromEnv;
+
+  const h = await headers();
+  const forwardedHost = h.get("x-forwarded-host");
+  const host = forwardedHost ?? h.get("host");
+  if (!host) return "http://localhost:3000";
+
+  const proto = h.get("x-forwarded-proto") ?? (forwardedHost ? "https" : "http");
+  return `${proto}://${host}`;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = await getBaseUrl();
+
+  return {
+    metadataBase: new URL(baseUrl),
+    title: TITLE,
+    description: DESCRIPTION,
+    openGraph: {
+      type: "website",
+      url: "/",
+      siteName: TITLE,
+      title: TITLE,
+      description: DESCRIPTION,
+      locale: "en_US",
+      // No `images` here on purpose: src/app/opengraph-image.png (file convention)
+      // supplies og:image with width/height/type/alt automatically.
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: TITLE,
+      description: DESCRIPTION,
+    },
+  };
+}
 
 export default function Home() {
   return (
