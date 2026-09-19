@@ -1,32 +1,12 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import Image from "next/image";
 
 const TITLE = "OpenGraph Preview Test";
 const DESCRIPTION = "Troubleshooting rich link previews in iMessage";
 
-/**
- * Absolute origin for OpenGraph URLs. NEXT_PUBLIC_SITE_URL wins when set;
- * otherwise it is derived from the request so tunnels (ngrok, etc.) just work.
- */
-async function getBaseUrl(): Promise<string> {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL;
-  if (fromEnv) return fromEnv;
-
-  const h = await headers();
-  const forwardedHost = h.get("x-forwarded-host");
-  const host = forwardedHost ?? h.get("host");
-  if (!host) return "http://localhost:3000";
-
-  const proto = h.get("x-forwarded-proto") ?? (forwardedHost ? "https" : "http");
-  return `${proto}://${host}`;
-}
-
 export async function generateMetadata(): Promise<Metadata> {
-  const baseUrl = await getBaseUrl();
-
   return {
-    metadataBase: new URL(baseUrl),
+    // metadataBase is inherited from src/app/layout.tsx (see getBaseUrl).
     title: TITLE,
     description: DESCRIPTION,
     openGraph: {
