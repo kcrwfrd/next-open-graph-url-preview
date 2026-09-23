@@ -40,13 +40,13 @@ With [ngrok](https://ngrok.com), using a reserved domain:
 
 ```bash
 # terminal 1
-npm run dev
+npm start
 
 # terminal 2
-ngrok http 3000 --url https://terminologically-unapprehensive-eboni.ngrok-free.dev
+ngrok http 3000
 ```
 
-Replace the URL with your own ngrok domain. Then share the tunnel URL in iMessage, Slack, or another app, and watch the terminal for the fetcher's requests.
+Then share the tunnel URL in iMessage, Slack, or another app, and watch the terminal for the fetcher's requests.
 
 You don't need to configure anything for the tunnel. `getBaseUrl()` reads the forwarded host headers that ngrok sends, so `og:url` and `og:image` resolve to the tunnel domain. To force a specific origin anyway, set `NEXT_PUBLIC_SITE_URL`:
 
